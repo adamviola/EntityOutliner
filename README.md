@@ -65,7 +65,7 @@ And many more!
 ## Features
 **Entity Selector**
 
-![GIF demonstrating use of the entity selector screen](https://imgur.com/uT5Zl6Z.gif "It's a prefix search!")
+![GIF demonstrating use of the entity selector screen](https://imgur.com/mg3qZxK.gif "It's a prefix search!")
 
 This screen allows outlining of any entity in the game. There's a search bar for narrowing down entities and buttons to organize the results by entity category, deselect all entities, and toggle on/off the outlines. Entities added by other mods **do** appear in the results.
 
