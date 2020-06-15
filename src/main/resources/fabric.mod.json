@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "entityoutliner",
+  "version": "1.0.0",
+
+  "name": "Entity Outliner",
+  "description": "Allows you to select entity types to outline, making them visible through obstructions at any distance.",
+  "authors": [
+    "supersmartypants"
+  ],
+  "contact": {
+    "homepage": "https://github.com/supersmartypants/EntityOutliner",
+    "sources": "https://github.com/supersmartypants/EntityOutliner"
+  },
+
+  "license": "MIT",
+  "icon": "assets/entityoutliner/icon.png",
+
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "net.entityoutliner.EntityOutliner"
+    ]
+  },
+  "mixins": [
+    {
+      "config": "entityoutliner.mixins.json",
+      "environment": "client"
+    }
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.7.4",
+    "fabric": "*",
+    "minecraft": "1.15.x"
+  },
+  "suggests": {
+    "flamingo": "*"
+  },
+
+  "custom": {
+    "modmenu:clientsideOnly": true
+  }
+}
