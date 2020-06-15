@@ -75,7 +75,7 @@ For the technically inclined, the search works using a precomputed hashtable tha
 
 ![Image of the keybind selector for toggling the outlines and selector screen](https://i.imgur.com/au39Ov1.png "Hopefully o and p aren't taken!")
 
-Custom keybinds are provided to open th entity the selector and toggle the outline. The outline can also be toggled via a button inside the entity selector.
+Custom keybinds are provided to open the entity selector and toggle the outline. The outline can also be toggled via a button inside the entity selector.
 
 
 ## Installation
