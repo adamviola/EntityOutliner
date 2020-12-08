@@ -12,6 +12,7 @@ import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.widget.CheckboxWidget;
 import net.minecraft.client.gui.widget.ElementListWidget;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EntityType;
 
 @Environment(EnvType.CLIENT)
@@ -37,8 +38,8 @@ public class EntityListWidget extends ElementListWidget<EntityListWidget.Entry> 
         return 400;
     }
 
-    protected int getScrollbarPosition() {
-        return super.getScrollbarPosition() + 32;
+    protected int getScrollbarPositionX() {
+        return super.getScrollbarPositionX() + 32;
     }
 
     @Override
@@ -74,12 +75,12 @@ public class EntityListWidget extends ElementListWidget<EntityListWidget.Entry> 
         }
 
         public static EntityListWidget.CheckboxEntry create(EntityType<?> entityType, boolean checked, int width) {
-            return new EntityListWidget.CheckboxEntry(new CheckboxWidget(width/2 - 155, 0, 310, 20, entityType.getName().asString(), checked), entityType);
+            return new EntityListWidget.CheckboxEntry(new CheckboxWidget(width/2 - 155, 0, 310, 20, entityType.getName(), checked), entityType);
         }
 
-        public void render(int i, int j, int k, int l, int m, int n, int o, boolean bl, float f) {
+        public void render(MatrixStack matrices, int i, int j, int k, int l, int m, int n, int o, boolean bl, float f) {
             this.checkbox.y = j;
-            this.checkbox.render(n, o, f);
+            this.checkbox.render(matrices, n, o, f);
         }
 
         public List<? extends Element> children() {
@@ -105,7 +106,7 @@ public class EntityListWidget extends ElementListWidget<EntityListWidget.Entry> 
         private final int width;
         private final int height;
 
-        private final Drawer drawer;
+        // private final Drawer drawer;
 
         private HeaderEntry(TextRenderer font, String title, int width, int height) {
             this.font = font;
@@ -113,15 +114,15 @@ public class EntityListWidget extends ElementListWidget<EntityListWidget.Entry> 
             this.width = width;
             this.height = height;
 
-            this.drawer = new Drawer();
+            // this.drawer = new Drawer();
         }
 
         public static EntityListWidget.HeaderEntry create(TextRenderer font, String title, int width, int height) {
             return new EntityListWidget.HeaderEntry(font, title, width, height);
         }
 
-        public void render(int i, int j, int k, int l, int m, int n, int o, boolean bl, float f) {
-            drawer.drawCenteredString(this.font, this.title, this.width / 2, j + (this.height / 2) - (this.font.fontHeight / 2), 16777215);
+        public void render(MatrixStack matrices, int i, int j, int k, int l, int m, int n, int o, boolean bl, float f) {
+            Drawer.drawCenteredString(matrices, this.font, this.title, this.width / 2, j + (this.height / 2) - (this.font.fontHeight / 2), 16777215);
         }
 
         public List<? extends Element> children() {

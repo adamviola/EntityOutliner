@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "entityoutliner",
-  "version": "1.0.0",
+  "version": "${version}",
 
   "name": "Entity Outliner",
   "description": "Allows you to select entity types to outline, making them visible through obstructions at any distance.",
@@ -32,10 +32,10 @@
   "depends": {
     "fabricloader": ">=0.7.4",
     "fabric": "*",
-    "minecraft": "1.15.x"
+    "minecraft": "1.16.x"
   },
   "suggests": {
-    "flamingo": "*"
+    "another-mod": "*"
   },
 
   "custom": {

@@ -12,11 +12,11 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 
 import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.resource.language.I18n;
-
-import net.minecraft.entity.EntityCategory;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.SpawnGroup;
 import net.minecraft.entity.EntityType;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.registry.Registry;
 
 
@@ -34,17 +34,17 @@ public class EntitySelector extends Screen {
     }
 
     protected void init() {
-        this.minecraft.keyboard.enableRepeatEvents(true);
+        this.client.keyboard.setRepeatEvents(true);
 
         if (searcher == null) {
             initializePrefixTree();
         }
 
-        this.list = new EntityListWidget(this.minecraft, this.width, this.height, 32, this.height - 32, 25, this::onCheckboxToggled);
+        this.list = new EntityListWidget(this.client, this.width, this.height, 32, this.height - 32, 25, this::onCheckboxToggled);
         this.children.add(list);
 
         // Create search field
-        this.searchField = new TextFieldWidget(this.font, this.width / 2 - 100, 6, 200, 20, "");
+        this.searchField = new TextFieldWidget(this.textRenderer, this.width / 2 - 100, 6, 200, 20, Text.of(searchText));
         this.searchField.setText(searchText);
         this.searchField.setChangedListener(this::onSearchFieldUpdate);
         this.children.add(searchField);
@@ -57,27 +57,27 @@ public class EntitySelector extends Screen {
         int buttonY = this.height - 16 - (buttonHeight / 2);
 
         // Add sort type button
-        this.addButton(new ButtonWidget(buttonOffset, buttonY, buttonWidth, buttonHeight, I18n.translate(groupByCategory ? "button.entity-outliner.categories" : "button.entity-outliner.no-categories"), (button) -> {
+        this.addButton(new ButtonWidget(buttonOffset, buttonY, buttonWidth, buttonHeight, new TranslatableText(groupByCategory ? "button.entity-outliner.categories" : "button.entity-outliner.no-categories"), (button) -> {
             groupByCategory = !groupByCategory;
             this.onSearchFieldUpdate(this.searchField.getText());
-            button.setMessage(I18n.translate(groupByCategory ? "button.entity-outliner.categories" : "button.entity-outliner.no-categories"));
+            button.setMessage(new TranslatableText(groupByCategory ? "button.entity-outliner.categories" : "button.entity-outliner.no-categories"));
         }));
 
         // Add Deselect All button
-        this.addButton(new ButtonWidget(buttonOffset + (buttonWidth + buttonInterval), buttonY, buttonWidth, buttonHeight, I18n.translate("button.entity-outliner.deselect"), (button) -> {
+        this.addButton(new ButtonWidget(buttonOffset + (buttonWidth + buttonInterval), buttonY, buttonWidth, buttonHeight, new TranslatableText("button.entity-outliner.deselect"), (button) -> {
             outlinedEntityTypes.clear();
             this.onSearchFieldUpdate(this.searchField.getText());
         }));
 
         // Add toggle outlining button
-        this.addButton(new ButtonWidget(buttonOffset + (buttonWidth + buttonInterval) * 2, buttonY, buttonWidth, buttonHeight, I18n.translate(EntityOutliner.outliningEntities ? "button.entity-outliner.on" : "button.entity-outliner.off"), (button) -> {
+        this.addButton(new ButtonWidget(buttonOffset + (buttonWidth + buttonInterval) * 2, buttonY, buttonWidth, buttonHeight, new TranslatableText(EntityOutliner.outliningEntities ? "button.entity-outliner.on" : "button.entity-outliner.off"), (button) -> {
             EntityOutliner.outliningEntities = !EntityOutliner.outliningEntities;
-            button.setMessage(I18n.translate(EntityOutliner.outliningEntities ? "button.entity-outliner.on" : "button.entity-outliner.off"));
+            button.setMessage(new TranslatableText(EntityOutliner.outliningEntities ? "button.entity-outliner.on" : "button.entity-outliner.off"));
         }));
 
         // Add Done button
-        this.addButton(new ButtonWidget(buttonOffset + (buttonWidth + buttonInterval) * 3, buttonY, buttonWidth, buttonHeight, I18n.translate("button.entity-outliner.done"), (button) -> {
-            this.minecraft.openScreen(null);
+        this.addButton(new ButtonWidget(buttonOffset + (buttonWidth + buttonInterval) * 3, buttonY, buttonWidth, buttonHeight, new TranslatableText("button.entity-outliner.done"), (button) -> {
+            this.client.openScreen(null);
         }));
         
         this.setInitialFocus(this.searchField);
@@ -107,9 +107,7 @@ public class EntitySelector extends Screen {
         // Add each entity type to everywhere it belongs in the prefix "tree"
         for (EntityType<?> entityType : entityTypes) {
 
-            String name = entityType.getName().asString().toLowerCase();
-            // EntityCategory category = entityType.getCategory();
-
+            String name = entityType.getName().getString().toLowerCase();
             allResults.add(entityType);
 
             List<String> prefixes = new ArrayList<>();
@@ -155,7 +153,7 @@ public class EntitySelector extends Screen {
 
     // Cleans up the name of each category with capitalization
     // TODO: what about localization?
-    private String getCategoryName(EntityCategory category) {
+    private String getCategoryName(SpawnGroup category) {
         String name = "";
         for (String term : category.getName().trim().split("\\p{Punct}|\\p{Space}")) {
             name += StringUtils.capitalize(term) + " ";
@@ -175,10 +173,10 @@ public class EntitySelector extends Screen {
             
             // Splits results into categories and separates them with headers
             if (groupByCategory) {
-                Hashtable<EntityCategory, List<EntityType<?>>> resultsByCategory = new Hashtable<>();
+                Hashtable<SpawnGroup, List<EntityType<?>>> resultsByCategory = new Hashtable<>();
 
                 for (EntityType<?> entityType : results) {
-                    EntityCategory category = entityType.getCategory();
+                    SpawnGroup category = entityType.getSpawnGroup();
                     if (!resultsByCategory.containsKey(category)) {
                         resultsByCategory.put(category, new ArrayList<>());
                     }
@@ -186,9 +184,9 @@ public class EntitySelector extends Screen {
                     resultsByCategory.get(category).add(entityType);
                 }
 
-                for (EntityCategory category : EntityCategory.values()) {
+                for (SpawnGroup category : SpawnGroup.values()) {
                     if (resultsByCategory.containsKey(category)) {
-                        this.list.addListEntry(EntityListWidget.HeaderEntry.create(this.minecraft.textRenderer, getCategoryName(category), this.width, 25));
+                        this.list.addListEntry(EntityListWidget.HeaderEntry.create(this.client.textRenderer, getCategoryName(category), this.width, 25));
 
                         for (EntityType<?> entityType : resultsByCategory.get(category)) {
                             this.list.addListEntry(EntityListWidget.CheckboxEntry.create(entityType, outlinedEntityTypes.contains(entityType), this.width));
@@ -203,7 +201,7 @@ public class EntitySelector extends Screen {
                 }
             }
         } else { // If there are no results, let the user know
-            this.list.addListEntry(EntityListWidget.HeaderEntry.create(this.minecraft.textRenderer, "No results", this.width, 25));
+            this.list.addListEntry(EntityListWidget.HeaderEntry.create(this.client.textRenderer, "No results", this.width, 25));
         }
 
         // This prevents an overscroll when the user is already scrolled down and the results list is shortened
@@ -212,7 +210,7 @@ public class EntitySelector extends Screen {
 
     // Called when config screen is escaped
     public void removed() {
-        this.minecraft.keyboard.enableRepeatEvents(false);
+        this.client.keyboard.setRepeatEvents(false);
 
         // TODO: Save currently outlined entities to file?
     }
@@ -221,20 +219,36 @@ public class EntitySelector extends Screen {
         this.searchField.tick();
     }
 
-    public void render(int mouseX, int mouseY, float delta) {
+    // public void render(int mouseX, int mouseY, float delta) {
+    //     // Render dirt background
+    //     this.renderBackground(); 
+
+    //     // Render scrolling list
+    //     this.list.render(mouseX, mouseY, delta);
+
+    //     // Render our search bar
+    //     this.setFocused(this.searchField);
+    //     this.searchField.setSelected(true);
+    //     this.searchField.render(mouseX, mouseY, delta);
+
+    //     // Render buttons
+    //     super.render(mouseX, mouseY, delta);
+    // }
+
+    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         // Render dirt background
-        this.renderBackground(); 
+        this.renderBackground(matrices); 
 
         // Render scrolling list
-        this.list.render(mouseX, mouseY, delta);
+        this.list.render(matrices, mouseX, mouseY, delta);
 
         // Render our search bar
         this.setFocused(this.searchField);
         this.searchField.setSelected(true);
-        this.searchField.render(mouseX, mouseY, delta);
+        this.searchField.render(matrices, mouseX, mouseY, delta);
 
         // Render buttons
-        super.render(mouseX, mouseY, delta);
+        super.render(matrices, mouseX, mouseY, delta);
     }
 
     // Sends mouseDragged event to the scrolling list
