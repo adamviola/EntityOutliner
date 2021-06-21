@@ -33,7 +33,7 @@ public class EntityOutliner implements ClientModInitializer {
     private static final KeyBinding CONFIG_BIND = new KeyBinding(
         "key.entity-outliner.selector",
         InputUtil.Type.KEYSYM,
-        GLFW.GLFW_KEY_P,
+        GLFW.GLFW_KEY_SEMICOLON,
         "title.entity-outliner.title"
     );
 
