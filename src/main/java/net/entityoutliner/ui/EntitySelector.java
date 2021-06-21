@@ -1,4 +1,4 @@
-package net.entityoutliner;
+package net.entityoutliner.ui;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
+import net.entityoutliner.EntityOutliner;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 
@@ -19,8 +20,8 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.registry.Registry;
 
-
 public class EntitySelector extends Screen {
+    protected final Screen parent;
 
     private TextFieldWidget searchField;
     private EntityListWidget list;
@@ -28,9 +29,14 @@ public class EntitySelector extends Screen {
     private static String searchText = "";
     public static Hashtable<String, List<EntityType<?>>> searcher; // Prefix -> arr of results
     public static HashSet<EntityType<?>> outlinedEntityTypes = new HashSet<>();
-
-    protected EntitySelector(Text title) {
-        super(title);
+ 
+    public EntitySelector(Screen parent) {
+       super(new TranslatableText("title.entity-outliner.selector"));
+       this.parent = parent;
+    }
+ 
+    public void onClose() {
+        this.client.openScreen(this.parent);
     }
 
     protected void init() {
@@ -41,13 +47,13 @@ public class EntitySelector extends Screen {
         }
 
         this.list = new EntityListWidget(this.client, this.width, this.height, 32, this.height - 32, 25, this::onCheckboxToggled);
-        this.children.add(list);
+        this.addSelectableChild(list);
 
         // Create search field
         this.searchField = new TextFieldWidget(this.textRenderer, this.width / 2 - 100, 6, 200, 20, Text.of(searchText));
         this.searchField.setText(searchText);
         this.searchField.setChangedListener(this::onSearchFieldUpdate);
-        this.children.add(searchField);
+        this.addSelectableChild(searchField);
 
         // Create buttons
         int buttonWidth = 80;
@@ -57,26 +63,26 @@ public class EntitySelector extends Screen {
         int buttonY = this.height - 16 - (buttonHeight / 2);
 
         // Add sort type button
-        this.addButton(new ButtonWidget(buttonOffset, buttonY, buttonWidth, buttonHeight, new TranslatableText(groupByCategory ? "button.entity-outliner.categories" : "button.entity-outliner.no-categories"), (button) -> {
+        this.addDrawableChild(new ButtonWidget(buttonOffset, buttonY, buttonWidth, buttonHeight, new TranslatableText(groupByCategory ? "button.entity-outliner.categories" : "button.entity-outliner.no-categories"), (button) -> {
             groupByCategory = !groupByCategory;
             this.onSearchFieldUpdate(this.searchField.getText());
             button.setMessage(new TranslatableText(groupByCategory ? "button.entity-outliner.categories" : "button.entity-outliner.no-categories"));
         }));
 
         // Add Deselect All button
-        this.addButton(new ButtonWidget(buttonOffset + (buttonWidth + buttonInterval), buttonY, buttonWidth, buttonHeight, new TranslatableText("button.entity-outliner.deselect"), (button) -> {
+        this.addDrawableChild(new ButtonWidget(buttonOffset + (buttonWidth + buttonInterval), buttonY, buttonWidth, buttonHeight, new TranslatableText("button.entity-outliner.deselect"), (button) -> {
             outlinedEntityTypes.clear();
             this.onSearchFieldUpdate(this.searchField.getText());
         }));
 
         // Add toggle outlining button
-        this.addButton(new ButtonWidget(buttonOffset + (buttonWidth + buttonInterval) * 2, buttonY, buttonWidth, buttonHeight, new TranslatableText(EntityOutliner.outliningEntities ? "button.entity-outliner.on" : "button.entity-outliner.off"), (button) -> {
+        this.addDrawableChild(new ButtonWidget(buttonOffset + (buttonWidth + buttonInterval) * 2, buttonY, buttonWidth, buttonHeight, new TranslatableText(EntityOutliner.outliningEntities ? "button.entity-outliner.on" : "button.entity-outliner.off"), (button) -> {
             EntityOutliner.outliningEntities = !EntityOutliner.outliningEntities;
             button.setMessage(new TranslatableText(EntityOutliner.outliningEntities ? "button.entity-outliner.on" : "button.entity-outliner.off"));
         }));
 
         // Add Done button
-        this.addButton(new ButtonWidget(buttonOffset + (buttonWidth + buttonInterval) * 3, buttonY, buttonWidth, buttonHeight, new TranslatableText("button.entity-outliner.done"), (button) -> {
+        this.addDrawableChild(new ButtonWidget(buttonOffset + (buttonWidth + buttonInterval) * 3, buttonY, buttonWidth, buttonHeight, new TranslatableText("button.entity-outliner.done"), (button) -> {
             this.client.openScreen(null);
         }));
         
@@ -211,8 +217,7 @@ public class EntitySelector extends Screen {
     // Called when config screen is escaped
     public void removed() {
         this.client.keyboard.setRepeatEvents(false);
-
-        // TODO: Save currently outlined entities to file?
+        EntityOutliner.saveConfig();
     }
 
     public void tick() {
@@ -244,7 +249,7 @@ public class EntitySelector extends Screen {
 
         // Render our search bar
         this.setFocused(this.searchField);
-        this.searchField.setSelected(true);
+        this.searchField.setTextFieldFocused(true);
         this.searchField.render(matrices, mouseX, mouseY, delta);
 
         // Render buttons

@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.entityoutliner.EntityOutliner;
-import net.entityoutliner.EntitySelector;
+import net.entityoutliner.ui.EntitySelector;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 

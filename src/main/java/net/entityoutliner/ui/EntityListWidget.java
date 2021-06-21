@@ -1,4 +1,4 @@
-package net.entityoutliner;
+package net.entityoutliner.ui;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +10,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.Element;
+import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.widget.CheckboxWidget;
 import net.minecraft.client.gui.widget.ElementListWidget;
 import net.minecraft.client.util.math.MatrixStack;
@@ -84,9 +85,7 @@ public class EntityListWidget extends ElementListWidget<EntityListWidget.Entry> 
         }
 
         public List<? extends Element> children() {
-            List<CheckboxWidget> children = new ArrayList<CheckboxWidget>();
-            children.add(this.checkbox);
-            return children;
+            return List.of(this.checkbox);
         }
 
         public EntityType<?> getEntityType() {
@@ -95,6 +94,10 @@ public class EntityListWidget extends ElementListWidget<EntityListWidget.Entry> 
 
         public CheckboxWidget getCheckbox() {
             return this.checkbox;
+        }
+
+        public List<? extends Selectable> method_37025() {
+            return List.of(this.checkbox);
         }
     }
 
@@ -122,16 +125,20 @@ public class EntityListWidget extends ElementListWidget<EntityListWidget.Entry> 
         }
 
         public void render(MatrixStack matrices, int i, int j, int k, int l, int m, int n, int o, boolean bl, float f) {
-            Drawer.drawCenteredString(matrices, this.font, this.title, this.width / 2, j + (this.height / 2) - (this.font.fontHeight / 2), 16777215);
+            Drawer.drawCenteredText(matrices, this.font, this.title, this.width / 2, j + (this.height / 2) - (this.font.fontHeight / 2), 16777215);
         }
 
         public List<? extends Element> children() {
-            return null;
+            return new ArrayList<>();
         }
 
         public String toString() {
             return this.title;
         }
 
+        @Override
+        public List<? extends Selectable> method_37025() {
+            return new ArrayList<>();
+        }
     }
 }
