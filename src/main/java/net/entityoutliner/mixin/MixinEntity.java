@@ -22,7 +22,7 @@ public abstract class MixinEntity {
     @Inject(method = "isGlowing", at = @At("HEAD"), cancellable = true)
     private void outlineEntities(CallbackInfoReturnable<Boolean> ci) {
         if (EntityOutliner.outliningEntities && EntitySelector.outlinedEntityTypes != null) {
-            if (EntitySelector.outlinedEntityTypes.contains(this.type)) {
+            if (EntitySelector.outlinedEntityTypes.containsKey(this.type)) {
                 ci.setReturnValue(true);
             } 
         }

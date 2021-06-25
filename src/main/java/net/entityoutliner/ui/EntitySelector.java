@@ -2,13 +2,11 @@ package net.entityoutliner.ui;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
-
 import net.entityoutliner.EntityOutliner;
+import net.entityoutliner.ui.ColorWidget.Color;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 
@@ -27,8 +25,8 @@ public class EntitySelector extends Screen {
     private EntityListWidget list;
     public static boolean groupByCategory = true;
     private static String searchText = "";
-    public static Hashtable<String, List<EntityType<?>>> searcher; // Prefix -> arr of results
-    public static HashSet<EntityType<?>> outlinedEntityTypes = new HashSet<>();
+    public static HashMap<String, List<EntityType<?>>> searcher; // Prefix -> arr of results
+    public static HashMap<EntityType<?>, Color> outlinedEntityTypes = new HashMap<>();
  
     public EntitySelector(Screen parent) {
        super(new TranslatableText("title.entity-outliner.selector"));
@@ -46,7 +44,7 @@ public class EntitySelector extends Screen {
             initializePrefixTree();
         }
 
-        this.list = new EntityListWidget(this.client, this.width, this.height, 32, this.height - 32, 25, this::onCheckboxToggled);
+        this.list = new EntityListWidget(this.client, this.width, this.height, 32, this.height - 32, 25);
         this.addSelectableChild(list);
 
         // Create search field
@@ -92,7 +90,7 @@ public class EntitySelector extends Screen {
 
     // Initializes the prefix tree used for searching in the entity selector screen
     private void initializePrefixTree() {
-        EntitySelector.searcher = new Hashtable<>();
+        EntitySelector.searcher = new HashMap<>();
 
         // Initialize no-text results
         List<EntityType<?>> allResults =  new ArrayList<EntityType<?>>();
@@ -148,25 +146,6 @@ public class EntitySelector extends Screen {
         }
     }
 
-    // Callback provided to CheckboxListWidget triggered when a checkbox is checked
-    private void onCheckboxToggled(EntityType<?> entityType, boolean checked) {
-        if (!checked && outlinedEntityTypes.contains(entityType)) {
-            outlinedEntityTypes.remove(entityType);
-        } else if (checked && !outlinedEntityTypes.contains(entityType)) {
-            outlinedEntityTypes.add(entityType);
-        }
-    }
-
-    // Cleans up the name of each category with capitalization
-    // TODO: what about localization?
-    private String getCategoryName(SpawnGroup category) {
-        String name = "";
-        for (String term : category.getName().trim().split("\\p{Punct}|\\p{Space}")) {
-            name += StringUtils.capitalize(term) + " ";
-        }
-        return name.trim();
-    }
-
     // Callback provided to TextFieldWidget triggered when its text updates
     private void onSearchFieldUpdate(String text) {
         searchText = text;
@@ -179,7 +158,7 @@ public class EntitySelector extends Screen {
             
             // Splits results into categories and separates them with headers
             if (groupByCategory) {
-                Hashtable<SpawnGroup, List<EntityType<?>>> resultsByCategory = new Hashtable<>();
+                HashMap<SpawnGroup, List<EntityType<?>>> resultsByCategory = new HashMap<>();
 
                 for (EntityType<?> entityType : results) {
                     SpawnGroup category = entityType.getSpawnGroup();
@@ -192,10 +171,10 @@ public class EntitySelector extends Screen {
 
                 for (SpawnGroup category : SpawnGroup.values()) {
                     if (resultsByCategory.containsKey(category)) {
-                        this.list.addListEntry(EntityListWidget.HeaderEntry.create(this.client.textRenderer, getCategoryName(category), this.width, 25));
+                        this.list.addListEntry(EntityListWidget.HeaderEntry.create(category, this.client.textRenderer, this.width, 25));
 
                         for (EntityType<?> entityType : resultsByCategory.get(category)) {
-                            this.list.addListEntry(EntityListWidget.CheckboxEntry.create(entityType, outlinedEntityTypes.contains(entityType), this.width));
+                            this.list.addListEntry(EntityListWidget.EntityEntry.create(entityType, this.width));
                         }
 
                     }      
@@ -203,11 +182,11 @@ public class EntitySelector extends Screen {
 
             } else {
                 for (EntityType<?> entityType : results) {
-                    this.list.addListEntry(EntityListWidget.CheckboxEntry.create(entityType, outlinedEntityTypes.contains(entityType), this.width));
+                    this.list.addListEntry(EntityListWidget.EntityEntry.create(entityType, this.width));
                 }
             }
         } else { // If there are no results, let the user know
-            this.list.addListEntry(EntityListWidget.HeaderEntry.create(this.client.textRenderer, "No results", this.width, 25));
+            this.list.addListEntry(EntityListWidget.HeaderEntry.create(null, this.client.textRenderer, this.width, 25));
         }
 
         // This prevents an overscroll when the user is already scrolled down and the results list is shortened
@@ -223,22 +202,6 @@ public class EntitySelector extends Screen {
     public void tick() {
         this.searchField.tick();
     }
-
-    // public void render(int mouseX, int mouseY, float delta) {
-    //     // Render dirt background
-    //     this.renderBackground(); 
-
-    //     // Render scrolling list
-    //     this.list.render(mouseX, mouseY, delta);
-
-    //     // Render our search bar
-    //     this.setFocused(this.searchField);
-    //     this.searchField.setSelected(true);
-    //     this.searchField.render(mouseX, mouseY, delta);
-
-    //     // Render buttons
-    //     super.render(mouseX, mouseY, delta);
-    // }
 
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         // Render dirt background

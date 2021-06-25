@@ -4,7 +4,8 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Set;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -16,6 +17,7 @@ import com.google.gson.reflect.TypeToken;
 import org.lwjgl.glfw.GLFW;
 
 import net.entityoutliner.ui.EntitySelector;
+import net.entityoutliner.ui.ColorWidget.Color;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -61,9 +63,9 @@ public class EntityOutliner implements ClientModInitializer {
     public static void saveConfig() {
         JsonObject config = new JsonObject();
 
-        Set<String> outlinedEntityNames = EntitySelector.outlinedEntityTypes.stream()
-                                            .map(entityType -> entityType.getUntranslatedName())
-                                            .collect(Collectors.toSet());
+        List<List<String>> outlinedEntityNames = EntitySelector.outlinedEntityTypes.entrySet().stream()
+            .map(entry -> List.of(EntityType.getId(entry.getKey()).toString(), entry.getValue().name()))
+            .collect(Collectors.toList());
 
         config.add("outlinedEntities", GSON.toJsonTree(outlinedEntityNames));
 
@@ -79,12 +81,15 @@ public class EntityOutliner implements ClientModInitializer {
         try {
             JsonObject config = GSON.fromJson(new String(Files.readAllBytes(getConfigPath())), JsonObject.class);
             if (config.has("outlinedEntities")) {
-                Type setType = new TypeToken<Set<String>>(){}.getType();
-                Set<String> outlinedEntityNames = GSON.fromJson(config.get("outlinedEntities"), setType);
+                Type setType = new TypeToken<List<List<String>>>(){}.getType();
+                List<List<String>> outlinedEntityNames = GSON.fromJson(config.get("outlinedEntities"), setType);
+
+                Map<EntityType<?>, Color> outlinedEntityTypes = outlinedEntityNames.stream()
+                    .collect(Collectors.toMap(list -> EntityType.get(list.get(0)).get(), list -> Color.valueOf(list.get(1))));;
 
                 for (EntityType<?> entityType : Registry.ENTITY_TYPE)
-                    if (outlinedEntityNames.contains(entityType.getUntranslatedName()))
-                        EntitySelector.outlinedEntityTypes.add(entityType);
+                    if (outlinedEntityTypes.containsKey(entityType))
+                        EntitySelector.outlinedEntityTypes.put(entityType, outlinedEntityTypes.get(entityType));
             }
         }
         catch (IOException | JsonSyntaxException ex) {

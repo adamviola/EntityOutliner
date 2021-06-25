@@ -8,5 +8,6 @@
     "button.entity-outliner.categories": "Categories",
     "button.entity-outliner.no-categories": "No Categories",
     "button.entity-outliner.on": "Toggled On",
-    "button.entity-outliner.off": "Toggled Off"
+    "button.entity-outliner.off": "Toggled Off",
+    "gui.entity-outliner.no_results": "No results"
 }
