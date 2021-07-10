@@ -16,7 +16,7 @@ This mod will help with:
   
   by outlining zombies, creepers, skeletons, and spiders.
   
-  ![Gif showing how outlining monsters can reveal unlit caves](https://i.imgur.com/8n6Jlyt.gif "Great for when you've reached a dead end in your cave!")
+  ![Gif showing how outlining monsters can reveal unlit caves](https://i.imgur.com/owNj5BE.gif "Great for when you've reached a dead end in your cave!")
   
   
 </details>
@@ -65,7 +65,7 @@ And many more!
 ## Features
 **Entity Selector**
 
-![GIF demonstrating use of the entity selector screen](https://imgur.com/mg3qZxK.gif "It's a prefix search!")
+![GIF demonstrating use of the entity selector screen](https://i.imgur.com/XozyBa4.gif "It's a prefix search!")
 
 This screen allows outlining of any entity in the game. There's a search bar for narrowing down entities and buttons to organize the results by entity category, deselect all entities, and toggle on/off the outlines. Entities added by other mods **do** appear in the results.
 
