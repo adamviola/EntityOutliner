@@ -1,0 +1,13 @@
+{
+    "key.entity-outliner.selector": "Abrir seletor de entidades",
+    "key.entity-outliner.outline": "Mostrar/ocultar contorno de entidades",
+    "title.entity-outliner.selector": "Seletor de entidades",
+    "title.entity-outliner.title": "Marcador de entidades",
+    "button.entity-outliner.deselect": "Desmarcar todas",
+    "button.entity-outliner.done": "Concluído",
+    "button.entity-outliner.categories": "Categorias",
+    "button.entity-outliner.no-categories": "Nenhuma categoria",
+    "button.entity-outliner.on": "Sim",
+    "button.entity-outliner.off": "Não",
+    "gui.entity-outliner.no_results": "Nenhum resultado"
+}
