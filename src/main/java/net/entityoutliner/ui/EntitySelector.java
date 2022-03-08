@@ -34,7 +34,7 @@ public class EntitySelector extends Screen {
     }
  
     public void onClose() {
-        this.client.openScreen(this.parent);
+        this.client.setScreen(this.parent);
     }
 
     protected void init() {
@@ -81,7 +81,7 @@ public class EntitySelector extends Screen {
 
         // Add Done button
         this.addDrawableChild(new ButtonWidget(buttonOffset + (buttonWidth + buttonInterval) * 3, buttonY, buttonWidth, buttonHeight, new TranslatableText("button.entity-outliner.done"), (button) -> {
-            this.client.openScreen(null);
+            this.client.setScreen(null);
         }));
         
         this.setInitialFocus(this.searchField);

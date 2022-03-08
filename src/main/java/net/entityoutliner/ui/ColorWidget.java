@@ -54,7 +54,7 @@ public class ColorWidget extends PressableWidget {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.blendFunc(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA);
-        drawTexture(matrices, this.x, this.y, this.isFocused() ? 20.0F : 0.0F, this.color.ordinal() * 20, 20, 20, 40, 160);
+        drawTexture(matrices, this.x, this.y, this.isFocused() ? 20.0F : 0.0F, this.color.ordinal() * 20, 20, 20, 40, 180);
         this.renderBackground(matrices, minecraftClient, mouseX, mouseY);
     }
 
@@ -66,7 +66,8 @@ public class ColorWidget extends PressableWidget {
         YELLOW(255, 255, 0),
         GREEN(0, 255, 0),
         BLUE(0, 0, 255),
-        PURPLE(127, 0, 127);
+        PURPLE(127, 0, 127),
+        PINK(255, 155, 182);
 
         public int red;
         public int green;
@@ -74,6 +75,7 @@ public class ColorWidget extends PressableWidget {
 
         private static final Map<SpawnGroup, Color> spawnGroupColors = Map.of(
             SpawnGroup.AMBIENT, Color.PURPLE,
+            SpawnGroup.AXOLOTLS, Color.PINK,
             SpawnGroup.CREATURE, Color.YELLOW,
             SpawnGroup.MISC, Color.WHITE,
             SpawnGroup.MONSTER, Color.RED,

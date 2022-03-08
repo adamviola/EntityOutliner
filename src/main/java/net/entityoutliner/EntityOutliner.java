@@ -103,7 +103,7 @@ public class EntityOutliner implements ClientModInitializer {
         }
 
         if (CONFIG_BIND.isPressed()) {           
-            client.openScreen(new EntitySelector(null));
+            client.setScreen(new EntitySelector(null));
         }
     }
 

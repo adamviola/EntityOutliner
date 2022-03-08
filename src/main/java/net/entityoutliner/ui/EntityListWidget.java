@@ -117,7 +117,7 @@ public class EntityListWidget extends ElementListWidget<EntityListWidget.Entry> 
             return this.checkbox;
         }
 
-        public List<? extends Selectable> method_37025() {
+        public List<? extends Selectable> selectableChildren() {
             return this.children;
         }
     }
@@ -164,7 +164,7 @@ public class EntityListWidget extends ElementListWidget<EntityListWidget.Entry> 
         }
 
         @Override
-        public List<? extends Selectable> method_37025() {
+        public List<? extends Selectable> selectableChildren() {
             return new ArrayList<>();
         }
     }
