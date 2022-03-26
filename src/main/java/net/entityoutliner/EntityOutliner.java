@@ -73,7 +73,7 @@ public class EntityOutliner implements ClientModInitializer {
             Files.write(getConfigPath(), GSON.toJson(config).getBytes());
         }
         catch (IOException ex) {
-            logException(ex, "Failed to save BoostedBrightness config");
+            logException(ex, "Failed to save EntityOutliner config");
         }
     }
 
