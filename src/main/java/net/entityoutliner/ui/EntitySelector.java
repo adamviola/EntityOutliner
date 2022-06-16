@@ -15,7 +15,6 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.entity.EntityType;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.registry.Registry;
 
 public class EntitySelector extends Screen {
@@ -29,7 +28,7 @@ public class EntitySelector extends Screen {
     public static HashMap<EntityType<?>, Color> outlinedEntityTypes = new HashMap<>();
  
     public EntitySelector(Screen parent) {
-       super(new TranslatableText("title.entity-outliner.selector"));
+       super(Text.translatable("title.entity-outliner.selector"));
        this.parent = parent;
     }
  
@@ -61,26 +60,26 @@ public class EntitySelector extends Screen {
         int buttonY = this.height - 16 - (buttonHeight / 2);
 
         // Add sort type button
-        this.addDrawableChild(new ButtonWidget(buttonOffset, buttonY, buttonWidth, buttonHeight, new TranslatableText(groupByCategory ? "button.entity-outliner.categories" : "button.entity-outliner.no-categories"), (button) -> {
+        this.addDrawableChild(new ButtonWidget(buttonOffset, buttonY, buttonWidth, buttonHeight, Text.translatable(groupByCategory ? "button.entity-outliner.categories" : "button.entity-outliner.no-categories"), (button) -> {
             groupByCategory = !groupByCategory;
             this.onSearchFieldUpdate(this.searchField.getText());
-            button.setMessage(new TranslatableText(groupByCategory ? "button.entity-outliner.categories" : "button.entity-outliner.no-categories"));
+            button.setMessage(Text.translatable(groupByCategory ? "button.entity-outliner.categories" : "button.entity-outliner.no-categories"));
         }));
 
         // Add Deselect All button
-        this.addDrawableChild(new ButtonWidget(buttonOffset + (buttonWidth + buttonInterval), buttonY, buttonWidth, buttonHeight, new TranslatableText("button.entity-outliner.deselect"), (button) -> {
+        this.addDrawableChild(new ButtonWidget(buttonOffset + (buttonWidth + buttonInterval), buttonY, buttonWidth, buttonHeight, Text.translatable("button.entity-outliner.deselect"), (button) -> {
             outlinedEntityTypes.clear();
             this.onSearchFieldUpdate(this.searchField.getText());
         }));
 
         // Add toggle outlining button
-        this.addDrawableChild(new ButtonWidget(buttonOffset + (buttonWidth + buttonInterval) * 2, buttonY, buttonWidth, buttonHeight, new TranslatableText(EntityOutliner.outliningEntities ? "button.entity-outliner.on" : "button.entity-outliner.off"), (button) -> {
+        this.addDrawableChild(new ButtonWidget(buttonOffset + (buttonWidth + buttonInterval) * 2, buttonY, buttonWidth, buttonHeight, Text.translatable(EntityOutliner.outliningEntities ? "button.entity-outliner.on" : "button.entity-outliner.off"), (button) -> {
             EntityOutliner.outliningEntities = !EntityOutliner.outliningEntities;
-            button.setMessage(new TranslatableText(EntityOutliner.outliningEntities ? "button.entity-outliner.on" : "button.entity-outliner.off"));
+            button.setMessage(Text.translatable(EntityOutliner.outliningEntities ? "button.entity-outliner.on" : "button.entity-outliner.off"));
         }));
 
         // Add Done button
-        this.addDrawableChild(new ButtonWidget(buttonOffset + (buttonWidth + buttonInterval) * 3, buttonY, buttonWidth, buttonHeight, new TranslatableText("button.entity-outliner.done"), (button) -> {
+        this.addDrawableChild(new ButtonWidget(buttonOffset + (buttonWidth + buttonInterval) * 3, buttonY, buttonWidth, buttonHeight, Text.translatable("button.entity-outliner.done"), (button) -> {
             this.client.setScreen(null);
         }));
         
@@ -104,7 +103,7 @@ public class EntitySelector extends Screen {
         entityTypes.sort(new Comparator<EntityType<?>>() {
             @Override
             public int compare(EntityType<?> o1, EntityType<?> o2) {
-                return o1.getName().asString().compareTo(o2.getName().asString());
+                return o1.getName().getString().compareTo(o2.getName().getString());
             }
         });
         

@@ -14,7 +14,6 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
@@ -32,7 +31,7 @@ public class ColorWidget extends PressableWidget {
     }
 
     public ColorWidget(int x, int y, int width, int height, EntityType<?> entityType) {
-        this(x, y, width, height, new TranslatableText("options.chat.color"), entityType);
+        this(x, y, width, height, Text.translatable("options.chat.color"), entityType);
     }
 
     public void onShow() {

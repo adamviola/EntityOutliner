@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "entityoutliner",
-  "version": "1.2.1",
+  "version": "${version}",
 
   "name": "Entity Outliner",
   "description": "Allows you to select entity types to outline, making them visible through all obstructions within render distance.",
@@ -37,7 +37,7 @@
     "fabric": "*",
     "fabric-lifecycle-events-v1": "*",
     "fabric-key-binding-api-v1": "*",
-    "minecraft": ">=1.18"
+    "minecraft": ">=1.19"
   },
   "suggests": {
     "flamingo": "*"
