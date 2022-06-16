@@ -13,6 +13,9 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.scoreboard.AbstractTeam;
 
 @Mixin(WorldRenderer.class)
 public abstract class MixinWorldRenderer {
@@ -26,6 +29,18 @@ public abstract class MixinWorldRenderer {
             Color color = EntitySelector.outlinedEntityTypes.get(entity.getType());
             OutlineVertexConsumerProvider outlineVertexConsumers = (OutlineVertexConsumerProvider) vertexConsumers;
             outlineVertexConsumers.setColor(color.red, color.green, color.blue, 255);
+
+            if (entity.getType() == EntityType.PLAYER) {
+                PlayerEntity player = (PlayerEntity) entity;
+                AbstractTeam team = player.getScoreboardTeam();
+                if (team != null && team.getColor().getColorValue() != null) {
+                    int hexColor = team.getColor().getColorValue();
+                    int green = hexColor % 256;
+                    int blue = (hexColor / 256) % 256;
+                    int red = (hexColor / 65536) % 256;
+                    outlineVertexConsumers.setColor(red, green, blue, 255);
+                }
+            }
         }
     }
 }
