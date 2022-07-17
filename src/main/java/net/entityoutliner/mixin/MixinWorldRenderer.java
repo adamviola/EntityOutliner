@@ -35,8 +35,8 @@ public abstract class MixinWorldRenderer {
                 AbstractTeam team = player.getScoreboardTeam();
                 if (team != null && team.getColor().getColorValue() != null) {
                     int hexColor = team.getColor().getColorValue();
-                    int green = hexColor % 256;
-                    int blue = (hexColor / 256) % 256;
+                    int blue = hexColor % 256;
+                    int green = (hexColor / 256) % 256;
                     int red = (hexColor / 65536) % 256;
                     outlineVertexConsumers.setColor(red, green, blue, 255);
                 }
