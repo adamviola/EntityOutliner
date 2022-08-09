@@ -1,0 +1,13 @@
+{
+    "key.entity-outliner.selector": "Ouvrir le sélecteur d'entités",
+    "key.entity-outliner.outline": "Activer le contour d'entités",
+    "title.entity-outliner.selector": "Sélecteur d'entités",
+    "title.entity-outliner.title": "Sélecteur d'entités (Entity Outliner)",
+    "button.entity-outliner.deselect": "Tout déselectionner",
+    "button.entity-outliner.done": "Terminer",
+    "button.entity-outliner.categories": "Catégories",
+    "button.entity-outliner.no-categories": "Aucune catégories",
+    "button.entity-outliner.on": "Activer",
+    "button.entity-outliner.off": "Désactiver",
+    "gui.entity-outliner.no_results": "Aucun résultat"
+}
