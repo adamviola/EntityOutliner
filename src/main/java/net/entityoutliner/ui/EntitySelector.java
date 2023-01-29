@@ -15,7 +15,8 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.entity.EntityType;
 import net.minecraft.text.Text;
-import net.minecraft.util.registry.Registry;
+// import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registries;
 
 public class EntitySelector extends Screen {
     protected final Screen parent;
@@ -37,8 +38,6 @@ public class EntitySelector extends Screen {
     }
 
     protected void init() {
-        this.client.keyboard.setRepeatEvents(true);
-
         if (searcher == null) {
             initializePrefixTree();
         }
@@ -60,28 +59,66 @@ public class EntitySelector extends Screen {
         int buttonY = this.height - 16 - (buttonHeight / 2);
 
         // Add sort type button
-        this.addDrawableChild(new ButtonWidget(buttonOffset, buttonY, buttonWidth, buttonHeight, Text.translatable(groupByCategory ? "button.entity-outliner.categories" : "button.entity-outliner.no-categories"), (button) -> {
-            groupByCategory = !groupByCategory;
-            this.onSearchFieldUpdate(this.searchField.getText());
-            button.setMessage(Text.translatable(groupByCategory ? "button.entity-outliner.categories" : "button.entity-outliner.no-categories"));
-        }));
+        // this.addDrawableChild(new ButtonWidget(buttonOffset, buttonY, buttonWidth, buttonHeight, Text.translatable(groupByCategory ? "button.entity-outliner.categories" : "button.entity-outliner.no-categories"), (button) -> {
+        //     groupByCategory = !groupByCategory;
+        //     this.onSearchFieldUpdate(this.searchField.getText());
+        //     button.setMessage(Text.translatable(groupByCategory ? "button.entity-outliner.categories" : "button.entity-outliner.no-categories"));
+        // }));
+
+        this.addDrawableChild(
+            ButtonWidget.builder(
+                Text.translatable(groupByCategory ? "button.entity-outliner.categories" : "button.entity-outliner.no-categories"),
+                (button) -> {
+                    groupByCategory = !groupByCategory;
+                    this.onSearchFieldUpdate(this.searchField.getText());
+                    button.setMessage(Text.translatable(groupByCategory ? "button.entity-outliner.categories" : "button.entity-outliner.no-categories"));
+                }
+            ).size(buttonWidth, buttonHeight).position(buttonOffset, buttonY).build()
+        );
 
         // Add Deselect All button
-        this.addDrawableChild(new ButtonWidget(buttonOffset + (buttonWidth + buttonInterval), buttonY, buttonWidth, buttonHeight, Text.translatable("button.entity-outliner.deselect"), (button) -> {
-            outlinedEntityTypes.clear();
-            this.onSearchFieldUpdate(this.searchField.getText());
-        }));
+        // this.addDrawableChild(new ButtonWidget(buttonOffset + (buttonWidth + buttonInterval), buttonY, buttonWidth, buttonHeight, Text.translatable("button.entity-outliner.deselect"), (button) -> {
+        //     outlinedEntityTypes.clear();
+        //     this.onSearchFieldUpdate(this.searchField.getText());
+        // }));
+
+        this.addDrawableChild(
+            ButtonWidget.builder(
+                Text.translatable("button.entity-outliner.deselect"),
+                (button) -> {
+                    outlinedEntityTypes.clear();
+                    this.onSearchFieldUpdate(this.searchField.getText());
+                }
+            ).size(buttonWidth, buttonHeight).position(buttonOffset + (buttonWidth + buttonInterval), buttonY).build()
+        );
 
         // Add toggle outlining button
-        this.addDrawableChild(new ButtonWidget(buttonOffset + (buttonWidth + buttonInterval) * 2, buttonY, buttonWidth, buttonHeight, Text.translatable(EntityOutliner.outliningEntities ? "button.entity-outliner.on" : "button.entity-outliner.off"), (button) -> {
-            EntityOutliner.outliningEntities = !EntityOutliner.outliningEntities;
-            button.setMessage(Text.translatable(EntityOutliner.outliningEntities ? "button.entity-outliner.on" : "button.entity-outliner.off"));
-        }));
+        // this.addDrawableChild(new ButtonWidget(buttonOffset + (buttonWidth + buttonInterval) * 2, buttonY, buttonWidth, buttonHeight, Text.translatable(EntityOutliner.outliningEntities ? "button.entity-outliner.on" : "button.entity-outliner.off"), (button) -> {
+        //     EntityOutliner.outliningEntities = !EntityOutliner.outliningEntities;
+        //     button.setMessage(Text.translatable(EntityOutliner.outliningEntities ? "button.entity-outliner.on" : "button.entity-outliner.off"));
+        // }));
+
+        this.addDrawableChild(
+            ButtonWidget.builder(
+                Text.translatable(EntityOutliner.outliningEntities ? "button.entity-outliner.on" : "button.entity-outliner.off"),
+                (button) -> {
+                    EntityOutliner.outliningEntities = !EntityOutliner.outliningEntities;
+                    button.setMessage(Text.translatable(EntityOutliner.outliningEntities ? "button.entity-outliner.on" : "button.entity-outliner.off"));
+                }
+            ).size(buttonWidth, buttonHeight).position(buttonOffset + (buttonWidth + buttonInterval) * 2, buttonY).build()
+        );
 
         // Add Done button
-        this.addDrawableChild(new ButtonWidget(buttonOffset + (buttonWidth + buttonInterval) * 3, buttonY, buttonWidth, buttonHeight, Text.translatable("button.entity-outliner.done"), (button) -> {
-            this.client.setScreen(null);
-        }));
+        // this.addDrawableChild(new ButtonWidget(buttonOffset + (buttonWidth + buttonInterval) * 3, buttonY, buttonWidth, buttonHeight, Text.translatable("button.entity-outliner.done"), (button) -> {
+        //     this.client.setScreen(null);
+        // }));
+
+        this.addDrawableChild(
+            ButtonWidget.builder(
+                Text.translatable("button.entity-outliner.done"),
+                (button) -> { this.client.setScreen(null); }
+            ).size(buttonWidth, buttonHeight).position(buttonOffset + (buttonWidth + buttonInterval) * 3, buttonY).build()
+        );
         
         this.setInitialFocus(this.searchField);
         this.onSearchFieldUpdate(this.searchField.getText());
@@ -97,7 +134,7 @@ public class EntitySelector extends Screen {
 
         // Get sorted list of entity types
         List<EntityType<?>> entityTypes = new ArrayList<>();
-        for (EntityType<?> entityType : Registry.ENTITY_TYPE) {
+        for (EntityType<?> entityType : Registries.ENTITY_TYPE) {
             entityTypes.add(entityType);
         }
         entityTypes.sort(new Comparator<EntityType<?>>() {
@@ -194,7 +231,6 @@ public class EntitySelector extends Screen {
 
     // Called when config screen is escaped
     public void removed() {
-        this.client.keyboard.setRepeatEvents(false);
         EntityOutliner.saveConfig();
     }
 

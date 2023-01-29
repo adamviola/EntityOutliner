@@ -75,11 +75,11 @@ public class EntityListWidget extends ElementListWidget<EntityListWidget.Entry> 
         }
 
         public void render(MatrixStack matrices, int i, int j, int k, int l, int m, int n, int o, boolean bl, float f) {
-            this.checkbox.y = j;
+            this.checkbox.setY(j);
             this.checkbox.render(matrices, n, o, f);
 
             if (this.children.contains(this.color)) {
-                this.color.y = j;
+                this.color.setY(j);
                 this.color.render(matrices, n, o, f);
             }
         }

@@ -26,7 +26,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.EntityType;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registries;
 
 public class EntityOutliner implements ClientModInitializer {
     private static final Gson GSON = new Gson();
@@ -87,7 +87,7 @@ public class EntityOutliner implements ClientModInitializer {
                 Map<EntityType<?>, Color> outlinedEntityTypes = outlinedEntityNames.stream()
                     .collect(Collectors.toMap(list -> EntityType.get(list.get(0)).get(), list -> Color.valueOf(list.get(1))));;
 
-                for (EntityType<?> entityType : Registry.ENTITY_TYPE)
+                for (EntityType<?> entityType : Registries.ENTITY_TYPE)
                     if (outlinedEntityTypes.containsKey(entityType))
                         EntitySelector.outlinedEntityTypes.put(entityType, outlinedEntityTypes.get(entityType));
             }

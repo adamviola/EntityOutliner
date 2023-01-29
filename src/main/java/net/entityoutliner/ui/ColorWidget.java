@@ -43,8 +43,6 @@ public class ColorWidget extends PressableWidget {
         EntitySelector.outlinedEntityTypes.put(this.entityType, this.color);
     }
 
-    public void appendNarrations(NarrationMessageBuilder builder) {}
-
     public void renderButton(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         MinecraftClient minecraftClient = MinecraftClient.getInstance();
         RenderSystem.setShaderTexture(0, TEXTURE);
@@ -53,7 +51,7 @@ public class ColorWidget extends PressableWidget {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.blendFunc(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA);
-        drawTexture(matrices, this.x, this.y, this.isFocused() ? 20.0F : 0.0F, this.color.ordinal() * 20, 20, 20, 40, 180);
+        drawTexture(matrices, this.getX(), this.getY(), this.isFocused() ? 20.0F : 0.0F, this.color.ordinal() * 20, 20, 20, 40, 180);
         this.renderBackground(matrices, minecraftClient, mouseX, mouseY);
     }
 
@@ -103,4 +101,7 @@ public class ColorWidget extends PressableWidget {
             return colors[index];
         }
     }
+
+    @Override
+    protected void appendClickableNarrations(NarrationMessageBuilder builder) {}
 }
