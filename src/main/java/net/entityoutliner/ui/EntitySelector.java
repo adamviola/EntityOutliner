@@ -247,7 +247,7 @@ public class EntitySelector extends Screen {
 
         // Render our search bar
         this.setFocused(this.searchField);
-        this.searchField.setTextFieldFocused(true);
+        this.searchField.setFocused(true);
         this.searchField.render(matrices, mouseX, mouseY, delta);
 
         // Render buttons

@@ -1,12 +1,8 @@
 plugins {
-	id 'fabric-loom' version '0.11-SNAPSHOT'
+	id 'fabric-loom' version '1.2-SNAPSHOT'
 	id 'maven-publish'
 }
 
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
-
-archivesBaseName = project.archives_base_name
 version = project.mod_version
 group = project.maven_group
 
@@ -30,6 +26,10 @@ dependencies {
 	compileOnly 'com.google.code.findbugs:jsr305:+'
 }
 
+base {
+	archivesName = project.archives_base_name
+}
+
 processResources {
 	inputs.property "version", project.version
 
@@ -40,6 +40,9 @@ processResources {
 	// from(sourceSets.main.resources.srcDirs) {
 	// 	exclude "fabric.mod.json"
 	// }
+
+	sourceCompatibility = JavaVersion.VERSION_17
+	targetCompatibility = JavaVersion.VERSION_17
 }
 
 // ensure that the encoding is set to UTF-8, no matter what the system default is
@@ -53,12 +56,13 @@ tasks.withType(JavaCompile) {
 // if it is present.
 // If you remove this task, sources will not be generated.
 task sourcesJar(type: Jar, dependsOn: classes) {
-	classifier = "sources"
 	from sourceSets.main.allSource
 }
 
 jar {
-	from "LICENSE"
+	from ("LICENSE") {
+		rename { "${it}_${base.archivesName.get()}"}
+	}
 }
 
 // configure the maven publication
