@@ -58,9 +58,7 @@ java {
 }
 
 jar {
-	from("LICENSE") {
-		rename { "${it}_${base.archivesName.get()}"}
-	}
+	from "LICENSE"
 }
 
 // configure the maven publication
