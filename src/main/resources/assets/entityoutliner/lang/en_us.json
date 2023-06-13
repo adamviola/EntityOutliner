@@ -1,0 +1,13 @@
+{
+    "key.entity-outliner.selector": "Open Entity Selector",
+    "key.entity-outliner.outline": "Toggle Entity Outline",
+    "title.entity-outliner.selector": "Entity Selector",
+    "title.entity-outliner.title": "Entity Outliner",
+    "button.entity-outliner.deselect": "Deselect All",
+    "button.entity-outliner.done": "Done",
+    "button.entity-outliner.categories": "Categories",
+    "button.entity-outliner.no-categories": "No Categories",
+    "button.entity-outliner.on": "Toggled On",
+    "button.entity-outliner.off": "Toggled Off",
+    "gui.entity-outliner.no_results": "No results"
+}
