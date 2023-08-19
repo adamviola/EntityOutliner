@@ -8,9 +8,9 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.PressableWidget;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.text.Text;
@@ -43,7 +43,7 @@ public class ColorWidget extends PressableWidget {
         EntitySelector.outlinedEntityTypes.put(this.entityType, this.color);
     }
 
-    public void renderButton(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+    public void renderButton(DrawContext context, int mouseX, int mouseY, float delta) {
         MinecraftClient minecraftClient = MinecraftClient.getInstance();
         RenderSystem.setShaderTexture(0, TEXTURE);
         RenderSystem.enableDepthTest();
@@ -51,8 +51,8 @@ public class ColorWidget extends PressableWidget {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.blendFunc(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA);
-        drawTexture(matrices, this.getX(), this.getY(), this.isFocused() ? 20.0F : 0.0F, this.color.ordinal() * 20, 20, 20, 40, 180);
-        this.renderBackground(matrices, minecraftClient, mouseX, mouseY);
+        drawTexture(context, TEXTURE, this.getX(), this.getY(), this.isFocused() ? 20 : 0, this.color.ordinal() * 20, 20, 20, 40, 180, 1);
+        //this.renderBackground(matrices, minecraftClient, mouseX, mouseY); 
     }
 
     public enum Color {

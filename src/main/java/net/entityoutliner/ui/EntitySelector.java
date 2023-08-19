@@ -7,15 +7,14 @@ import java.util.List;
 
 import net.entityoutliner.EntityOutliner;
 import net.entityoutliner.ui.ColorWidget.Color;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 
 import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.entity.EntityType;
 import net.minecraft.text.Text;
-// import net.minecraft.util.registry.Registry;
 import net.minecraft.registry.Registries;
 
 public class EntitySelector extends Screen {
@@ -238,20 +237,20 @@ public class EntitySelector extends Screen {
         this.searchField.tick();
     }
 
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         // Render dirt background
-        this.renderBackground(matrices); 
+        this.renderBackground(context); 
 
         // Render scrolling list
-        this.list.render(matrices, mouseX, mouseY, delta);
+        this.list.render(context, mouseX, mouseY, delta);
 
         // Render our search bar
         this.setFocused(this.searchField);
-        this.searchField.setTextFieldFocused(true);
-        this.searchField.render(matrices, mouseX, mouseY, delta);
+        //this.searchField.setTextFieldFocused(true);
+        this.searchField.render(context, mouseX, mouseY, delta);
 
         // Render buttons
-        super.render(matrices, mouseX, mouseY, delta);
+        super.render(context, mouseX, mouseY, delta);
     }
 
     // Sends mouseDragged event to the scrolling list
