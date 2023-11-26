@@ -10,7 +10,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.widget.CheckboxWidget;
@@ -20,6 +19,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.util.Language;
+import net.minecraft.client.gui.DrawContext;
 
 @Environment(EnvType.CLIENT)
 public class EntityListWidget extends ElementListWidget<EntityListWidget.Entry> {
@@ -74,13 +74,13 @@ public class EntityListWidget extends ElementListWidget<EntityListWidget.Entry> 
             );
         }
 
-        public void render(MatrixStack matrices, int i, int j, int k, int l, int m, int n, int o, boolean bl, float f) {
+        public void render(DrawContext context, int i, int j, int k, int l, int m, int n, int o, boolean bl, float f) {
             this.checkbox.setY(j);
-            this.checkbox.render(matrices, n, o, f);
+            this.checkbox.render(context, n, o, f);
 
             if (this.children.contains(this.color)) {
                 this.color.setY(j);
-                this.color.render(matrices, n, o, f);
+                this.color.render(context, n, o, f);
             }
         }
 
@@ -151,8 +151,8 @@ public class EntityListWidget extends ElementListWidget<EntityListWidget.Entry> 
             return new EntityListWidget.HeaderEntry(category, font, width, height);
         }
 
-        public void render(MatrixStack matrices, int i, int j, int k, int l, int m, int n, int o, boolean bl, float f) {
-            DrawableHelper.drawCenteredText(matrices, this.font, this.title, this.width / 2, j + (this.height / 2) - (this.font.fontHeight / 2), 16777215);
+        public void render(DrawContext context, int i, int j, int k, int l, int m, int n, int o, boolean bl, float f) {
+            context.drawCenteredTextWithShadow(this.font, this.title, this.width / 2, j + (this.height / 2) - (this.font.fontHeight / 2), 16777215);
         }
 
         public List<? extends Element> children() {

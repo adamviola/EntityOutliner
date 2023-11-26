@@ -17,6 +17,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.text.Text;
 // import net.minecraft.util.registry.Registry;
 import net.minecraft.registry.Registries;
+import net.minecraft.client.gui.DrawContext;
 
 public class EntitySelector extends Screen {
     protected final Screen parent;
@@ -235,23 +236,22 @@ public class EntitySelector extends Screen {
     }
 
     public void tick() {
-        this.searchField.tick();
+        //this.searchField.tick(); //WTF is it??
     }
 
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         // Render dirt background
-        this.renderBackground(matrices); 
+        this.renderBackground(context, mouseX, mouseY, delta);
 
         // Render scrolling list
-        this.list.render(matrices, mouseX, mouseY, delta);
+        this.list.render(context, mouseX, mouseY, delta);
 
         // Render our search bar
         this.setFocused(this.searchField);
-        this.searchField.setTextFieldFocused(true);
-        this.searchField.render(matrices, mouseX, mouseY, delta);
+        this.searchField.render(context, mouseX, mouseY, delta);
 
         // Render buttons
-        super.render(matrices, mouseX, mouseY, delta);
+        super.render(context, mouseX, mouseY, delta);
     }
 
     // Sends mouseDragged event to the scrolling list
