@@ -236,12 +236,12 @@ public class EntitySelector extends Screen {
     }
 
     public void tick() {
-        this.searchField.tick();
+        //this.searchField.tick(); //WTF is it??
     }
 
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         // Render dirt background
-        this.renderBackground(context);
+        this.renderBackground(context, mouseX, mouseY, delta);
 
         // Render scrolling list
         this.list.render(context, mouseX, mouseY, delta);
