@@ -4,18 +4,18 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import net.entityoutliner.EntityOutliner;
 import net.entityoutliner.ui.ColorWidget.Color;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 
 import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.entity.EntityType;
 import net.minecraft.text.Text;
-// import net.minecraft.util.registry.Registry;
 import net.minecraft.registry.Registries;
 
 public class EntitySelector extends Screen {
@@ -23,33 +23,32 @@ public class EntitySelector extends Screen {
 
     private TextFieldWidget searchField;
     private EntityListWidget list;
-    public static boolean groupByCategory = true;
+    private static boolean groupByCategory = true;
     private static String searchText = "";
-    public static HashMap<String, List<EntityType<?>>> searcher; // Prefix -> arr of results
-    public static HashMap<EntityType<?>, Color> outlinedEntityTypes = new HashMap<>();
+    private static Map<String, List<EntityType<?>>> searcher = new HashMap<>(); // Prefix -> arr of results
+    public final static Map<EntityType<?>, Color> outlinedEntityTypes = new HashMap<>();
  
     public EntitySelector(Screen parent) {
        super(Text.translatable("title.entity-outliner.selector"));
        this.parent = parent;
+       this.initializePrefixTree();
     }
- 
-    public void onClose() {
+
+    @Override
+    public void close() {
         this.client.setScreen(this.parent);
     }
 
+    @Override
     protected void init() {
-        if (searcher == null) {
-            initializePrefixTree();
-        }
-
-        this.list = new EntityListWidget(this.client, this.width, this.height, 32, this.height - 32, 25);
-        this.addSelectableChild(list);
+        this.list = new EntityListWidget(this.client, this.width, this.height - 64, 32, 25);
+        this.addDrawableChild(list);
 
         // Create search field
         this.searchField = new TextFieldWidget(this.textRenderer, this.width / 2 - 100, 6, 200, 20, Text.of(searchText));
         this.searchField.setText(searchText);
         this.searchField.setChangedListener(this::onSearchFieldUpdate);
-        this.addSelectableChild(searchField);
+        this.addDrawableChild(searchField);
 
         // Create buttons
         int buttonWidth = 80;
@@ -126,23 +125,18 @@ public class EntitySelector extends Screen {
 
     // Initializes the prefix tree used for searching in the entity selector screen
     private void initializePrefixTree() {
-        EntitySelector.searcher = new HashMap<>();
+        searcher = new HashMap<>();
 
         // Initialize no-text results
         List<EntityType<?>> allResults =  new ArrayList<EntityType<?>>();
-        EntitySelector.searcher.put("", allResults);
+        searcher.put("", allResults);
 
         // Get sorted list of entity types
         List<EntityType<?>> entityTypes = new ArrayList<>();
         for (EntityType<?> entityType : Registries.ENTITY_TYPE) {
             entityTypes.add(entityType);
         }
-        entityTypes.sort(new Comparator<EntityType<?>>() {
-            @Override
-            public int compare(EntityType<?> o1, EntityType<?> o2) {
-                return o1.getName().getString().compareTo(o2.getName().getString());
-            }
-        });
+        entityTypes.sort(Comparator.comparing(o -> o.getName().getString()));
         
         // Add each entity type to everywhere it belongs in the prefix "tree"
         for (EntityType<?> entityType : entityTypes) {
@@ -164,11 +158,11 @@ public class EntitySelector extends Screen {
 
                     // Get results for current prefix
                     List<EntityType<?>> results;
-                    if (EntitySelector.searcher.containsKey(prefix)) {
-                        results = EntitySelector.searcher.get(prefix);
+                    if (searcher.containsKey(prefix)) {
+                        results = searcher.get(prefix);
                     } else {
                         results = new ArrayList<EntityType<?>>();
-                        EntitySelector.searcher.put(prefix, results);
+                        searcher.put(prefix, results);
                     }
 
                     results.add(entityType);
@@ -210,7 +204,7 @@ public class EntitySelector extends Screen {
                         this.list.addListEntry(EntityListWidget.HeaderEntry.create(category, this.client.textRenderer, this.width, 25));
 
                         for (EntityType<?> entityType : resultsByCategory.get(category)) {
-                            this.list.addListEntry(EntityListWidget.EntityEntry.create(entityType, this.width));
+                            this.list.addListEntry(EntityListWidget.EntityEntry.create(entityType, this.width, this.client.textRenderer));
                         }
 
                     }      
@@ -218,7 +212,7 @@ public class EntitySelector extends Screen {
 
             } else {
                 for (EntityType<?> entityType : results) {
-                    this.list.addListEntry(EntityListWidget.EntityEntry.create(entityType, this.width));
+                    this.list.addListEntry(EntityListWidget.EntityEntry.create(entityType, this.width, this.client.textRenderer));
                 }
             }
         } else { // If there are no results, let the user know
@@ -230,31 +224,18 @@ public class EntitySelector extends Screen {
     }
 
     // Called when config screen is escaped
+    @Override
     public void removed() {
         EntityOutliner.saveConfig();
     }
 
-    public void tick() {
-        this.searchField.tick();
-    }
-
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        // Render dirt background
-        this.renderBackground(matrices); 
-
-        // Render scrolling list
-        this.list.render(matrices, mouseX, mouseY, delta);
-
-        // Render our search bar
-        this.setFocused(this.searchField);
-        this.searchField.setTextFieldFocused(true);
-        this.searchField.render(matrices, mouseX, mouseY, delta);
-
-        // Render buttons
-        super.render(matrices, mouseX, mouseY, delta);
+    @Override
+    public void renderBackground(final DrawContext context, final int mouseX, final int mouseY, final float delta) {
+        super.renderInGameBackground(context);
     }
 
     // Sends mouseDragged event to the scrolling list
+    @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
         return this.list.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
     }
