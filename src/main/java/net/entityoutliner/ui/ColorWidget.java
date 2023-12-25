@@ -2,15 +2,12 @@ package net.entityoutliner.ui;
 
 import java.util.Map;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.PressableWidget;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.text.Text;
@@ -20,7 +17,7 @@ import net.minecraft.util.Identifier;
 public class ColorWidget extends PressableWidget {
     private static final Identifier TEXTURE = new Identifier("entityoutliner:textures/gui/colors.png");
     private Color color;
-    private EntityType<?> entityType;
+    private final EntityType<?> entityType;
 
     private ColorWidget(int x, int y, int width, int height, Text message, EntityType<?> entityType) {
         super(x, y, width, height, message);
@@ -38,21 +35,18 @@ public class ColorWidget extends PressableWidget {
         this.color = EntitySelector.outlinedEntityTypes.get(this.entityType);
     }
 
+    @Override
     public void onPress() {
         this.color = this.color.next();
         EntitySelector.outlinedEntityTypes.put(this.entityType, this.color);
     }
 
-    public void renderButton(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        MinecraftClient minecraftClient = MinecraftClient.getInstance();
-        RenderSystem.setShaderTexture(0, TEXTURE);
-        RenderSystem.enableDepthTest();
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, this.alpha);
+    @Override
+    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
+        context.setShaderColor(1.0F, 1.0F, 1.0F, this.alpha);
         RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-        RenderSystem.blendFunc(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA);
-        drawTexture(matrices, this.getX(), this.getY(), this.isFocused() ? 20.0F : 0.0F, this.color.ordinal() * 20, 20, 20, 40, 180);
-        this.renderBackground(matrices, minecraftClient, mouseX, mouseY);
+        RenderSystem.enableDepthTest();
+        context.drawTexture(TEXTURE, this.getX(), this.getY(), this.isFocused() ? 20.0F : 0.0F, this.color.ordinal() * 20, 20, 20, 40, 180);
     }
 
     public enum Color {
@@ -66,9 +60,9 @@ public class ColorWidget extends PressableWidget {
         PURPLE(127, 0, 127),
         PINK(255, 155, 182);
 
-        public int red;
-        public int green;
-        public int blue;
+        public final int red;
+        public final int green;
+        public final int blue;
 
         private static final Map<SpawnGroup, Color> spawnGroupColors = Map.of(
             SpawnGroup.AMBIENT, Color.PURPLE,
@@ -81,9 +75,9 @@ public class ColorWidget extends PressableWidget {
             SpawnGroup.WATER_CREATURE, Color.BLUE
         );
 
-        private static Color[] colors = Color.values();
+        private final static Color[] colors = Color.values();
 
-        private Color(int red, int green, int blue) {
+        Color(int red, int green, int blue) {
             this.red = red;
             this.green = green;
             this.blue = blue;
